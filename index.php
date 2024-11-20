@@ -8,7 +8,7 @@
 error_reporting(0);
 
 // constants to be used
-define('VERSION', '1.8.0');
+define('VERSION', '1.9.0');
 define('ADVENT_CALENDAR', 'Advent Calendar');
 define('URL_DAY', 'day');
 define('URL_PHOTO', 'photo');
@@ -226,6 +226,7 @@ abstract class Image {
 					return $result;
 				}
 			}
+			
 
 			// nothing found, default image
 			$result['type'] = 'image/png';
@@ -331,10 +332,11 @@ abstract class Advent {
 	static function getDaysHtml() {
 		$result = '<div class="container days">';
 		foreach (self::getDays() as $d) {
-			if ($d->active) { $result .= '<a href="'. $d->url .'" title="'. I18n::translation('day-d', $d->day) .'"'; }
+			//if ($d->active) { $result .= '<div><a  style="background-image: url('.Routes::route(URL_PHOTO, $d->day) .')" href="'. $d->url .'" title="'. I18n::translation('day-d', $d->day) .'"'; }
+			if ($d->active) { $result .= '<div><a href="'. $d->url .'" title="'. I18n::translation('day-d', $d->day) .'"'; }
 			else { $result .= '<div'; }
-			$result .= ' class="day-row '. self::getDayColorClass($d->day, $d->active) .' tip" data-placement="bottom"><span>'. ($d->day) .'</span>';
-			if ($d->active) { $result .= '</a>'; }
+			$result .= ' class="day-row '. self::getDayColorClass($d->day, $d->active).' day-'.($d->day).' tip" data-placement="bottom"><span>'. ($d->day) .'</span>';
+			if ($d->active) { $result .= '</a></div>'; }
 			else { $result .= '</div>'; }
 		}
 		return $result.'</div>';
@@ -350,7 +352,7 @@ abstract class Advent {
 			$file = json_decode(file_get_contents(CALENDAR_FILE));
 			$day = $day == FIRST_DAY ? ($day+0) : $day;
 			if (!empty($file->{$day})) {
-				if (!empty($file->{$day}->title)) { $title = htmlspecialchars($file->{$day}->title); }
+				if (!empty($file->{$day}->title)) { $title = $file->{$day}->title; }
 				if (!empty($file->{$day}->legend)) { $legend = htmlspecialchars($file->{$day}->legend); }
 				if (!empty($file->{$day}->text)) { $text = $file->{$day}->text; }
 				if (!empty($file->{$day}->link)) { $link = $file->{$day}->link; }
@@ -369,17 +371,17 @@ abstract class Advent {
 		$link = $d->link;
 
 		// set the day number block
-		$result .= '<a href="'. Routes::route(URL_DAY, $day) .'" class="day-row '. self::getDayColorClass($day, TRUE) .'"><span>'. $day .'</span></a>';
+		$result .= '<div class="flex justify-center"><a href="'. Routes::route(URL_DAY, $day) .'" class="day-row '. self::getDayColorClass($day, TRUE) .'" style="background-image: url('.Routes::route(URL_PHOTO, $day) .')"><span>'. $day .'</span></a></div>';
 		// set the title
-		$result .= '<h1><span>';
+		$result .= '<div class="flex text-center"><h1><span>';
 		if (!empty($title)) { $result .= $title; }
 		else { $result .= 'Day '.$day; }
-		$result .= '</span></h1>';
+		$result .= '</span></h1></div>';
 		// clearfix
-		$result .= '<div class="clearfix"></div>';
+		$result .= '<div class="clearfix mouse-wrapper">';
 
 		// display image or video
-		$result .= '<div class="text-center">';
+		$result .= '<div class="text-center day-img">';
 		if (!empty($link)) { $result .= '<a href="'. $link .'" rel="external">'; }
 		if (Image::getInfo($day)['type'] == 'video/mp4') {
 			$result .= '<video controls preload="none" width="100%" class="img-responsive img-thumbnail"><source src="'. Routes::route(URL_PHOTO, $day) .'" type="video/mp4"></video>';
@@ -387,21 +389,23 @@ abstract class Advent {
 			$result .= '<img src="'. Routes::route(URL_PHOTO, $day) .'" class="img-responsive img-thumbnail" alt="'. htmlspecialchars($title) .'">';
 		}
 		if (!empty($link)) { $result .= '</a>'; }
+		$result .= '</div>';
 
 		// do we have a legend?
 		if (!empty($legend)) {
-			$result .= '<p class="legend">&mdash; ';
+			$result .= '<p class="legend text-center"> ';
 			if (!empty($link)) { $result .= '<a href="'. $link .'" rel="external">'; }
 			$result.= $legend;
 			if (!empty($link)) { $result .= '</a>'; }
 			$result .= '</p>';
 		}
+	
 		$result .= '</div>';
 		// clearfix
 		$result .= '<div class="clearfix"></div>';
 
 		// do we have a text?
-		if (!empty($text)) { $result .= '<div class="text panel panel-default"><div class="panel-body">'.$text.'</div></div>'; }
+		if (!empty($text)) { $result .= '<div class="text panel panel-default"><div class="panel-body p-5">'.$text.'</div></div>'; }
 
 		// we do not forget the pagination
 		$result .= '<ul class="pager"><li class="previous';
@@ -607,8 +611,9 @@ $authentificated = defined('PASSKEY') && isset($_SESSION['welcome']);
 		<link rel="shortcut icon" type="image/x-icon" href="<?= Routes::route() ?>assets/favicon.ico" />
 		<link rel="icon" type="image/png" href="<?= Routes::route() ?>assets/favicon.png" />
 
-		<link href="<?= Routes::route() ?>assets/css/bootstrap.min.css" rel="stylesheet">
+		<!-- <link href="<?= Routes::route() ?>assets/css/bootstrap.min.css" rel="stylesheet"> -->
 		<link href="<?= Routes::route() ?>assets/css/adventcalendar.css" rel="stylesheet">
+		<link href="<?= Routes::route() ?>assets/css/tailwind-all.css" rel="stylesheet">
 
 		<?php if (!defined('PASSKEY')): ?><link rel="alternate" type="application/rss+xml" href="<?php echo Routes::route(URL_RSS); ?>" title="<?php echo TITLE; ?>" /><?php endif; ?>
 
@@ -617,15 +622,15 @@ $authentificated = defined('PASSKEY') && isset($_SESSION['welcome']);
 
 	<body>
 
-		<nav class="navbar navbar-default navbar-static-top" role="navigation">
-		<div class="container">
-		<div class="navbar-header">
-		<a class="navbar-brand tip" href="<?= Routes::route() ?>" title="home" data-placement="right"><i class="glyphicon glyphicon-home"></i> <?php echo TITLE; ?></a>
+		<div class="header">
+		<div class="flex justify-center text-2xl">
+		<div class="header--center">
+		<a class="header-brand tip" href="<?= Routes::route() ?>" title="home" data-placement="right"><img src="./assets/img/logo_short_light_blue.png" /> <?php echo TITLE; ?></a>
 		</div>
 
-		<div class="collapse navbar-collapse" id="navbar-collapse">
-		<ul class="nav navbar-nav navbar-right">
-			<li><a href="<?= Routes::route(URL_ABOUT) ?>" class="tip" data-placement="left" title="<?php echo I18n::translation('about'); ?>"><i class="glyphicon glyphicon-tree-conifer"></i> <?php echo ADVENT_CALENDAR; ?></a></li>
+		<div class="header--right">
+		<ul class="header--right-list">
+			<li><a href="<?= Routes::route(URL_ABOUT) ?>" class="tip about" data-placement="left" title="<?php echo I18n::translation('about'); ?>"><i class="glyphicon glyphicon-tree-conifer"></i> <?php echo ADVENT_CALENDAR; ?></a></li>
 			<?php
 			// logout
 			if ($authentificated) { echo '<li><a href="'. Routes::route(URL_LOGOUT) .'" title="'. I18n::translation('logout') .'" class="tip" data-placement="bottom"><i class="glyphicon glyphicon-user"></i></a></li>'; }
@@ -635,28 +640,34 @@ $authentificated = defined('PASSKEY') && isset($_SESSION['welcome']);
 		</ul>
 		</div>
 		</div>
-		</nav>
-		<div class="background<?php if(defined('ALTERNATE_BACKGROUND')) { echo ' alternate-background'; } ?>">
+		</div>
+		<div id="snow-container"></div>
+		<div class="background max-w-3xl m-auto<?php if(defined('ALTERNATE_BACKGROUND')) { echo ' alternate-background'; } ?>">
 		<?php
 			echo $template;
 		?>
 		</div>
 
 		<footer>
-		<hr />
+		<div class="footer-trees"></div>
+		<div class="footer--content">
 		<?php if(defined('COPYRIGHT')): ?>
 			<div class="copyright text-center"><?php echo COPYRIGHT; ?></div>
 		<?php endif; ?>
-		<div class="container">
-			<p class="pull-right"><a href="#" id="goHomeYouAreDrunk" class="tip" data-placement="left" title="<?php echo I18n::translation('upstairs'); ?>"><i class="glyphicon glyphicon-menu-up"></i></a></p>
+		<div class="container pt-8">
+			<!-- <p class="pull-right"><a href="#" id="goHomeYouAreDrunk" class="tip" data-placement="left" title="<?php echo I18n::translation('upstairs'); ?>"><i class="glyphicon glyphicon-menu-up"></i></a></p> -->
 			<div class="notice">
-				<a href="https://github.com/Devenet/AdventCalendar" class="tip" title="Advent Calendar is a light web application to show a picture per day before an event." rel="external" ?><?php echo ADVENT_CALENDAR; ?></a> <?php echo I18n::translation('developed-by', '<a href="https://nicolas.devenet.info" rel="external">Nicolas Devenet</a>'); ?>
+				By <a href="https://github.com/jjmatthiesen" traget="_blanc">J.Matthiesen</a>,  based on the code from <a href="https://github.com/Devenet/AdventCalendar" class="tip" title="Advent Calendar is a light web application to show a picture per day before an event." rel="external">Nicolas Devenet</a>
+			</div>
+			<div class="notice">
+				Illustrations by <a href="https://www.etsy.com/de/shop/AIClipartCorner" target="_blanc" rel="external">AIClipartCorner</a> and  <a href="https://www.etsy.com/de/shop/MidodoArt" target="_blanc" rel="external">MidodoArt</a> .
 			</div>
 		</div>
+				</div>
 		</footer>
 
 		<script src="<?= Routes::route() ?>assets/js/jquery.min.js"></script>
-		<script src="<?= Routes::route() ?>assets/js/bootstrap.min.js"></script>
+		<!-- <script src="<?= Routes::route() ?>assets/js/bootstrap.min.js"></script>	 -->
 		<script src="<?= Routes::route() ?>assets/js/adventcalendar.js"></script>
 		<?php if (AddOns::Found('js')): ?>
 		<script>

@@ -1,0 +1,408 @@
+/**
+ *	forked from https://github.com/Devenet/AdventCalendar 
+*  by  by Nicolas Devenet <nicolas[at]devenet.info>
+ */
+
+ @import './snow';
+
+ // Responsive breakpoints
+$size-xs: 480px !default;
+$size-sm: 600px !default;
+$size-md: 840px !default;
+$size-lg: 960px !default;
+$size-xl: 1280px !default;
+$size-2x: 1440px !default;
+
+ :root {
+    --primary: #c9dce6ff;
+    --white: rgb(255, 255, 255);
+	--transparent-light-blue: #c0e7f769;
+	--light-blue: #81b7cdff;
+	--middle-blue: #44809eff;
+	--darker-blue: #31677eff;
+	--darkest-blue: #293d47;
+	--light-blue-grey: #506A73;
+	--dark-grey-blue: #6d8896;
+	--darkest-grey-blue: #324a57;
+	--light-grey: #bac3c5ff;
+    --dark-grey: #828784ff;
+	--font-dark: #1b1b1b;
+	--font-white: #c9dce6ff;
+  }
+
+body {
+	background: var(--darkest-grey-blue);
+	min-height: 100vh;
+	position: relative;
+}
+
+body, .tooltip {
+	font-family: -apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+}
+
+#snow-container {
+	height: calc(100% - 57px);;
+	position: absolute;
+	top: 57px;
+ 	width: 100%;
+	overflow: hidden;
+ }
+
+.background {
+	margin: 0;
+	padding: 20px 0 130px 0;
+	overflow: hidden;
+	padding-top: 90px;
+	color: var(--white);
+	// background: url(../img/tree_bark.png) left top repeat fixed;
+
+	.container {
+		padding-bottom: 45px
+	}
+}
+
+.alternate-background {
+	 background: url(../img/wave_grid.png) left top repeat fixed; 
+	}
+
+hr {
+	 border-color: var(--primary); 
+	}
+
+.header {
+	padding: 25px 25px 15px 25px;
+	color: var(--font-white);
+	background: #324a57;
+    width: 100%;
+    z-index: 99;
+	position: absolute;
+
+	&--right {
+		.about {
+			display: none;
+		}
+	}
+
+	&--center img {
+		max-height: 25px;
+		display: inline-grid;
+	
+	}
+}
+
+p, .text {
+	 font-size: 16px; 
+	 line-height: 25px; 
+	}
+
+.text-center {
+	 text-align: center; 
+	}
+
+.error {
+	 margin: 60px auto; 
+	 width: 70%; 
+	 font-size: 20px; 
+
+	h3 {
+		font-size: 30px; 
+	}
+
+	a.illustration {
+		display: block; margin-top: 50px; font-size: 60px; 
+	}
+	a.illustration-danger {
+	color: #fed2d2; 
+	}
+	a.illustration-danger:hover {
+		color: #b94a48; 
+	}
+}
+
+.day-row, .day-row span, .footer a, .error a.illustration, footer p a {
+	 -webkit-transition:all linear 0.2s; -moz-transition:all linear 0.2s; -o-transition:all linear 0.2s; transition:all linear 0.2s; 
+	}
+
+.font-normal {
+	 font-weight: 400; 
+	}
+
+.espace-top {
+	 margin-top: 20px; 
+	}
+	
+.espace-lg {
+	 margin-top: 50px; 
+	 margin-bottom: 50px; 
+	}
+
+a.rss-feed:hover {
+	 color: #FF7A4D !important; 
+	}
+
+.days {
+	display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+	max-width: 735px;
+	margin: 20px auto;
+}
+
+.day {
+	color: var(--font-white);
+	
+	.puzzle-ul {
+		list-style: circle;
+		margin-left: 15px;
+	}
+
+	.panel-body {
+		background: var(--darkest-blue);
+		margin: 0 11px;
+	}
+.source {
+	font-size: 10px;
+}
+
+	a.source  {
+		font-size: 10px;
+		display: block;
+		line-height: 14px;
+	}
+}
+
+.day-row {
+	display: inline-block;
+	width: 100px;
+	height: 100px;
+	margin: 6px 8px;
+	background: #556770ff;
+	position: relative;
+	overflow: hidden;
+	border-radius: 2px;
+}
+
+a.day-row:hover {
+	 -ms-transform:scale(1.1); -webkit-transform:scale(1.1); -o-transform:scale(1.1); transform:scale(1.1); border-radius: 10px; 
+	}
+
+.days div.day-row:hover {
+	 cursor: not-allowed; 
+	}
+
+.day-row span {
+	display: block;
+	position: absolute;
+	bottom: -8px;
+	right: 1px;
+	font-size: 60px;
+	line-height: 60px;
+	font-weight: 700;
+	letter-spacing: -4px;
+	color: #63767eff;
+}
+
+.day-row.active.day-color-1, .day-row.active.day-color-2, .day-row.active.day-color-3, .day-row.active.day-color-4 {
+	 background: var(--transparent-light-blue); 
+	 background-size: 90%;
+	 background-position-x: -30px;
+	 background-position-y: 40px;
+	 background-repeat: no-repeat;
+	 @for $i from 1 through 24 {
+		&.day-#{$i} {
+			background-image: url(../../assets/img/mice_small/#{$i}.png);
+		}
+	}
+	 span {
+			 color: #fff;
+		}
+	}
+
+
+.day {
+
+	&-img {
+		display: flex;
+		flex-direction: column;
+	}
+	
+	& h1 {
+	margin: 0 auto 6px;
+	line-height: 40px;
+	font-size: 40px;
+	padding-left: 10px;
+
+	&span {
+		display: inline-block; line-height: 55px; 
+	   }
+	}
+
+	&i {
+		font-size: 50px; 
+	}
+
+	.day-row  {
+		float: left; margin-bottom: 20px; 
+	   }
+	
+	img {
+	margin: 15px auto 5px; 
+	font-size: 20px;
+	line-height: 40px; 
+	max-height: 210px;
+	// background: #f0f8ff0f;
+
+		&.img-large {
+			max-height: 700px;
+		}
+		&.img-medium {
+			max-height: 280px;
+		}
+	}
+
+	p.legend {
+		font-size: 25px; 
+	   }
+
+	.text {
+	margin: 30px auto 50px; 
+		
+	&.panel-default {
+		position: relative;
+	}
+	}
+	
+	.pager {
+		font-weight: normal; margin-top: 40px; 
+	   }
+}
+
+.mouse-wrapper {
+	position: absolute;
+    bottom: 40px;
+    z-index: 99;
+    width: 100%;
+    left: 0;
+
+	.day-img {
+		position: relative;
+		display: flex;
+		align-content: flex-end;
+		flex-wrap: wrap;
+		margin: auto;
+	}
+}
+
+
+.about {
+	 margin-bottom: 20px; 
+	}
+.about .page-header {
+	 margin: 20px 0; 
+	}
+.about .page-header small {
+	 margin-left: 10px; 
+	}
+.about h2 i {
+	 font-size: 25px; margin-right: 5px; 
+	}
+.about h2 i.glyphicon-search {
+	 color: #49C7FF; 
+	}
+.about h2 i.glyphicon-heart {
+	 color: #5FC462; 
+	}
+.about h2 i.glyphicon-exclamation-sign {
+	 color: #C48CE8; 
+	}
+.about h2 i.glyphicon-wrench {
+	 color: #EDD360; 
+	}
+.about p {
+	 font-size: 20px; line-height: 24px; 
+	}
+.about p code {
+	 font-size: 17px; font-family: Consolas, Monaco, Menlo, "Courier New", monospace; 
+	}
+.about .problems strong {
+	 font-weight: 400; 
+	}
+
+footer {
+	position: absolute;
+	width: 100%;
+	bottom: 0;
+	.footer--content {
+		padding-bottom: 8px;
+		background-color: var(--white);
+		padding-left: 10px;
+
+		p {
+		font-size: 1.5em; 
+		a {
+			color: #777; 
+			}
+		}
+		.notice {
+		font-size:.8em; 
+		color: var(--light-blue-grey);
+
+		a {
+			text-decoration: underline; 
+			}
+		}
+	}
+
+	.footer-trees {
+		background-image: url("../img/trees.svg");
+		height: 10vh;
+	}
+}
+
+@media (min-width: $size-lg) {
+	footer {
+		.footer-trees {
+			height: 12vh;
+			background-size: 70%;
+		}
+	}
+
+	.day-row {
+		margin: 8px 10px;
+	}
+}
+
+@media (min-width:$size-sm) and (max-width: $size-lg) {
+	.day h1 {
+	max-width: 550px !important; 
+   } 
+ }
+ 
+@media (min-width:$size-xl) {
+	.background {
+		.container {
+			padding-bottom: 55px
+		}
+	}
+	.day {
+		img {
+			max-height: 250px;
+			margin-right: 208px;
+			&.puzzle-img {
+				margin: auto;
+			}
+		}
+
+		h1 {
+			max-width: 1020px !important; 
+   		} 
+
+	}
+}
+
+@media (max-width: $size-sm) {
+	.day h1 {
+	max-width: 100% !important; 
+   } 
+}
+

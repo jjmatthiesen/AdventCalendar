@@ -6,3 +6,7 @@ private/*.gif
 private/*.mp4
 private/calendar.json
 private/rss_cache.xml
+assets/img/mice_small/*
+assets/img/day*.png
+assets/img/day*.svg
+assets/img/day*.jpg

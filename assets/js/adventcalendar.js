@@ -3,9 +3,11 @@ $(function(){
 	$('#goHomeYouAreDrunk').click(function() { $('html,body').animate({scrollTop: 0}, 'slow'); return false; });
 	// external links
 	$('a[rel="external"]').click(function() { window.open($(this).attr('href')); return false; });
+	// logo
+	//$('.header-brand').before('<img src="./assets/img/logo_short_white.png" />');
 	
-	// activate tooltip
-	$('.tip').tooltip();
+	// // activate tooltip
+	// $('.tip').tooltip();
 
 	// keyboard navigation
 	if ($('.pager').length > 0) {
@@ -19,3 +21,9 @@ $(function(){
 		});
 	}
 });
+
+$(function(){
+	for (var i = 0; i<199; i++) {
+	  $('#snow-container').append("<div class='snow s" + (i+1) + "'></div>");
+	}
+  });
